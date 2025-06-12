@@ -1,3 +1,60 @@
+
+/* ▼▼▼ レスポンシブ対応 ▼▼▼ */
+@media screen and (max–width: 560)
+  
+
+  body {
+    font-size: 18px;
+    background: green;
+  }
+
+  .tab-button,
+  .formula-btn,
+  .gender-btn,
+  .propofol-button,
+  label,
+  input[type="number"] {
+    font-size: 18px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.4em;
+  }
+  
+  .tab-container {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .formula-group {
+    flex-direction: column;
+  }
+
+  .gender-btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .propofol-button {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  input[type="number"] {
+    width: 100%;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+
 body {
   font-family: sans-serif;
   margin: 20px;
@@ -114,63 +171,5 @@ input[type="number"] {
   width: 100%;
   max-width: 150px;
   box-sizing: border-box;
-}
 
-/* ▼▼▼ レスポンシブ対応 ▼▼▼ */
-@media (max-width: 768px) {
-
-  body {
-    font-size: 18px;
-  }
-
-  .tab-button,
-  .formula-btn,
-  .gender-btn,
-  .propofol-button,
-  label,
-  input[type="number"] {
-    font-size: 18px;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 1.4em;
-  }
-  
-  .tab-container {
-    flex-direction: column;
-  }
-
-  .tab-button {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-  .formula-group {
-    flex-direction: column;
-  }
-
-  .gender-btn {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  .propofol-button {
-    font-size: 15px;
-    padding: 10px;
-  }
-
-  input[type="number"] {
-    width: 100%;
-  }
-
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input,
-  select,
-  textarea {
-  font-size: 16px;
-}
 }
