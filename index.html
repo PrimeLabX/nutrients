@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name=”viewport” content=”width=device-width,initial-scale=1.0″> 
+    <title>N栄養計画ツール</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+      <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MPMBJQMJWR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-MPMBJQMJWR');
+</script>
+  <body>
+    <!-- タブ -->
+    <div class="tab-container">
+      <button class="tab-button active" data-target="formulas">栄養製剤</button>
+      <button class="tab-button" data-target="needs">必要栄養量</button>
+    </div>
+
+    <!-- 必要栄養量タブ -->
+    <div id="needs" class="tab-content">
+      <h2>患者の必要栄養量</h2>
+      <div>
+        <label>体重 (kg): <input type="number" id="weightInput" min="0" /></label>
+      </div>
+      <div>
+        <label>
+          カロリー係数 (kcal/kg/day):
+          <input
+            type="range"
+            id="kcalFactorInput"
+            min="10"
+            max="40"
+            value="25"
+            step="1"
+          />
+          <span id="kcalFactorDisplay">25</span> kcal/kg
+        </label>
+      </div>
+      <div>
+        <label>
+          病態（タンパク係数）:
+          <select id="conditionSelect">
+            <option data-min="" data-max="">-- 選択してください --</option>
+            <option data-min="1.0" data-max="1.5" selected>異化亢進（1.0～1.5 g/kg）</option>
+            <option data-min="0.8" data-max="1.0">正常（0.8～1.0 g/kg）</option>
+            <option data-min="0.8" data-max="1.0">急性腎不全（0.8～1.0 g/kg）</option>
+            <option data-min="0.6" data-max="0.8">保存期 CKD（0.6～0.8 g/kg）</option>
+            <option data-min="1.2" data-max="1.4">血液透析（1.2～1.4 g/kg）</option>
+            <option data-min="1.3" data-max="1.5">腹膜透析（1.3～1.5 g/kg）</option>
+            <option data-min="1.2" data-max="1.2">肝疾患・肝硬変（1.2 g/kg）</option>
+            <option data-min="0.5" data-max="0.5">肝性脳症（0.5 g/kg）</option>
+          </select>
+        </label>
+      </div>
+      <div id="needsResult"></div>
+    </div>
+
+    <!-- 栄養製剤タブ -->
+    <div id="formulas" class="tab-content active">
+      <h2>栄養製剤の投与量</h2>
+      <div id="formulaContainer">
+        <div class="formula-group">
+          <p><strong>製剤1</strong></p>
+          <div class="quick-buttons" id="quick1"></div>
+          <select class="formula-select" data-index="0"></select>
+          <div class="input-container" id="inputContainer0"></div>
+        </div>
+        <div class="formula-group">
+          <p><strong>製剤2</strong></p>
+          <div class="quick-buttons" id="quick2"></div>
+          <select class="formula-select" data-index="1"></select>
+          <div class="input-container" id="inputContainer1"></div>
+        </div>
+        <div class="formula-group">
+          <p><strong>製剤3</strong></p>
+          <div class="quick-buttons" id="quick3"></div>
+          <select class="formula-select" data-index="2"></select>
+          <div class="input-container" id="inputContainer2"></div>
+        </div>
+        <div class="formula-group">
+          <p><strong>製剤4</strong></p>
+          <div class="quick-buttons" id="quick4"></div>
+          <select class="formula-select" data-index="3"></select>
+          <div class="input-container" id="inputContainer3"></div>
+        </div>
+        
+      </div>
+      <div id="infusionResult"></div>
+    </div>
+  
+  
+  <script>
+  
+      
+    
+document.addEventListener("DOMContentLoaded", function () {
+  // タブ切り替え
+  const tabButtons = document.querySelectorAll(".tab-button");
+  const tabContents = document.querySelectorAll(".tab-content");
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const target = this.dataset.target;
+      tabButtons.forEach((b) => b.classList.remove("active"));
+      tabContents.forEach((c) => c.classList.remove("active"));
+      this.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  const weightInput = document.getElementById("weightInput");
+  const kcalFactorInput = document.getElementById("kcalFactorInput");
+  const conditionSelect = document.getElementById("conditionSelect");
+  weightInput.addEventListener("input", calculateNeeds);
+  kcalFactorInput.addEventListener("input", () => {
+    document.getElementById("kcalFactorDisplay").textContent = kcalFactorInput.value;
+    calculateNeeds();
+  });
+  conditionSelect.addEventListener("change", calculateNeeds);
+  
+
+
+function calculateNeeds() {
+  const weight = parseFloat(weightInput.value);
+  const kcalFactor = parseFloat(kcalFactorInput.value);
+  const selectedOption = conditionSelect.options[conditionSelect.selectedIndex];
+
+  const proteinMin = parseFloat(selectedOption.dataset.min);
+  const proteinMax = parseFloat(selectedOption.dataset.max);
+
+  if (isNaN(weight) || weight <= 0 || isNaN(proteinMin) || isNaN(proteinMax)) {
+    document.getElementById("needsResult").innerHTML = "<p>体重と病態を正しく入力してください。</p>";
+    return;
+  }
+
+  const totalKcal = weight * kcalFactor;
+  const totalProteinMin = weight * proteinMin;
+  const totalProteinMax = weight * proteinMax;
+
+  let proteinDisplay = "";
+
+  if (proteinMin === proteinMax) {
+    proteinDisplay = `${totalProteinMin.toFixed(1)} g/day`;
+  } else {
+    proteinDisplay = `${totalProteinMin.toFixed(1)} ～ ${totalProteinMax.toFixed(1)} g/day`;
+  }
+
+  document.getElementById("needsResult").innerHTML = `
+    <hr>
+    <p><strong>必要カロリー:</strong> ${Math.round(totalKcal)} kcal/day</p>
+    <p><strong>必要タンパク量:</strong> ${proteinDisplay}</p>
+  `;
+}
+
+//必要栄養量計算終了
+
+
+// 製剤定義 enevo: { name: "エネーボ", kcalPerMl: 1.0, proteinPerMl: 0.04, type: "rate", naPerMl: 0.44, kPerMl: 1 }, impact: { name: "インパクト", kcalPerMl: 1.5, proteinPerMl: 0.065, type: "rate", naPerMl: 1.1, kPerMl: 1.33 },
+ 
+  
+const formulas = {
+  peptamenAF: { name: "ペプタメンAF", kcalPerMl: 1.5, proteinPerMl: 0.095,fatPerMl:0.066, type: "rate", naPerMl: 2.63, kPerMl: 2.32 , naEqPerMl: 0, kEqPerMl: 0.
+      },
+　renalmp: {name: "リーナレンMP",　kcalPerMl: 200 / 125, proteinPerMl: 7.0 / 125, fatPerMl: 5.6 / 125,type: "rate",
+    naPerMl: 120/125,    kPerMl: 60 / 125,naEqPerMl:0,  kEqPerMl:0
+     },
+  recoverymini: { name: "リカバリーmini", kcalPerMl: 1.6,fatPerMl:0.06,proteinPerMl: 0.064, type: "rate", naPerMl: 1.84, kPerMl: 1.44, naEqPerMl: 0, kEqPerMl: 0
+      },
+　mainbalance: { name: "メイン", kcalPerMl: 1,fatPerMl:0.028,proteinPerMl: 0.05, type: "rate", naPerMl: 0.7, 　　kPerMl: 0.8, naEqPerMl: 0, kEqPerMl: 0
+      },
+　hinexre: { name: "ハイネックスリニュート", kcalPerMl: 1,fatPerMl:0.056,proteinPerMl: 0.06, type: "rate", naPerMl: 1.59, 　 kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
+      },
+　renawell: { name: "レナウェル3", kcalPerMl: 200/125,fatPerMl:8.9/125,proteinPerMl: 3/125, type: "rate", naPerMl: 60/125, kPerMl: 20/125, naEqPerMl: 0, kEqPerMl: 0
+      },
+  terumeal2_0a: { name: "テルミール2.0α", kcalPerMl: 2.0,fatPerMl:0.075,proteinPerMl: 0.0725, type: "rate", naPerMl: 1, kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
+      },
+  CZ_Hi: { name: "CZ_Hi", kcalPerMl: 1.0,fatPerMl:0.022,proteinPerMl: 0.05, type: "rate", naPerMl: 0.9, kPerMl: 1.5, naEqPerMl: 0, kEqPerMl: 0
+      },
+　  ELENTAL: { name: "エレンタール80g/300mL", kcalPerMl: 300/300, fatPerMl:0.51/300, proteinPerMl: 14.1/300, type: "rate", naPerMl: 260/300, kPerMl: 217.6/300, naEqPerMl: 0, kEqPerMl: 0
+      },
+  marmedone: { name: "マーメッドワン", kcalPerMl: 300/300, fatPerMl:11.4/300, proteinPerMl: 12/300, type: "rate", naPerMl: 420/300, kPerMl: 495/300, naEqPerMl:0, kEqPerMl: 0
+      },
+  elneopaNF1: { name: "エルネオパNF1", kcalPerMl: 0.56,fatPerMl:0, proteinPerMl: 0.02, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.022
+       },
+  elneopaNF2: { name: "エルネオパNF2", kcalPerMl: 0.82,fatPerMl:0, proteinPerMl: 0.03, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.027
+      },
+　kidoparen: { name: "キドパレン", kcalPerMl: 1.429, fatPerMl:0, proteinPerMl: 0.0313, type: "rate", naPerMl: 0, kPerMl: 0 , naEqPerMl: 0.047619, kEqPerMl: 0, memo: "微量元素が入ってない"
+      },
+　
+　 hullcalic: { name: "フルカリック3", kcalPerMl: 1160/1103, fatPerMl:0, proteinPerMl: 40/1103, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl:50/1103, kEqPerMl: 30/1103
+      },
+　highcalic: { name: "ハイカリックRF", kcalPerMl: 1.429,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0.0428
+      }, 
+　amiparen200: { name: "アミパレン200", kcalPerUnit: 80,fatPerMl:0, proteinPerUnit: 20, waterPerUnit: 200, type: "count", naPerUnit: 0, kPerUnit: 0, naEqPerMl: 0.4, kEqPerMl: 0
+      },
+　kidmine: { name: "キドミン", kcalPerMl: 14.41*4/200, fatPerMl:0, proteinPerMl: 14.41/200, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl:0, kEqPerMl: 0
+      },
+　　aminoleban: { name: "アミノレバン", kcalPerMl: 39.93*4/500, fatPerMl:0, proteinPerMl: 39.93/500, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 5/100, kEqPerMl: 47/500
+      },
+　 propofol: { name: "プロポフォール", kcalPerMl: 1.1, proteinPerMl: 0,fatPerMl:0.1, type: "rate", naPerMl: 0, kPerMl: 0 , naEqPerMl: 0, kEqPerMl: 0.
+      },
+  Intralipid: { name: "イントラリポス20%", kcalPerMl: 200/100, fatPerMl:22.2/100, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
+      },
+　BFLUID: { name: "ビーフリード", kcalPerMl: 420/1000, fatPerMl:0, proteinPerMl: 30/1000, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 35/1000, kEqPerMl: 20/1000
+      },
+  soldem3: { name: "ソルデム3", kcalPerMl: 0.108,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.02
+      },
+  soldem3A: { name: "ソルデム3A", kcalPerMl: 0.172, fatPerMl:0,proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.035, kEqPerMl: 0.02
+      },
+  soldem3AG: { name: "ソルデム3AG", kcalPerMl: 0.3, fatPerMl:0,proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.035, kEqPerMl: 0.02
+     },
+　solacetf: { name: "ソルアセトF", kcalPerMl: 0,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.131, kEqPerMl: 0.004
+      },
+　normalsaline: { name: "生理食塩水", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.154, kEqPerMl: 0.154
+      },
+　D5W: { name: "5%ブドウ糖液", kcalPerMl: 50/250, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
+      },
+
+　
+};
+
+  const quickList = ["peptamenAF", "renalmp", "recoverymini", "renawell", "hinexre", "propofol"];
+
+for (let i = 0; i < 4; i++) {
+  const quickArea = document.getElementById(`quick${i + 1}`);
+  const select = document.querySelector(`select[data-index='${i}']`);
+  const inputContainer = document.getElementById(`inputContainer${i}`);
+
+  // クイックボタン生成
+  quickList.forEach((key) => {
+    const btn = document.createElement("button");
+    btn.className = "formula-btn";
+    btn.textContent = formulas[key].name;
+    btn.addEventListener("click", () => {
+      select.value = key;
+      select.dispatchEvent(new Event("change"));
+    });
+    quickArea.appendChild(btn);
+  });
+
+  // セレクトメニュー生成
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = `-- 製剤${i + 1}を選択 --`;
+  select.appendChild(defaultOption);
+  for (const key in formulas) {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = formulas[key].name;
+    select.appendChild(option);
+  }
+
+  // セレクト変更時の処理
+  select.addEventListener("change", function () {
+    const selected = this.value;
+    inputContainer.innerHTML = "";
+    if (!formulas[selected]) return;
+
+    if (formulas[selected].type === "rate") {
+      // 横並びの親コンテナ
+      const container = document.createElement("div");
+      container.style.display = "flex";
+      container.style.alignItems = "center";
+      container.style.gap = "8px";
+
+      // ラベル＋入力フォーム
+      const label = document.createElement("label");
+      label.textContent = "速度(mL/h): ";
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.className = "rate";
+      input.addEventListener("input", calculateInfusion);
+
+      label.appendChild(input);
+      container.appendChild(label);
+
+      // ボタン群のコンテナ（速度用）
+      const presetContainer = document.createElement("div");
+      presetContainer.style.display = "flex";
+      presetContainer.style.gap = "4px";
+
+      [10, 20, 30, 40, 50, 60,70].forEach((val) => {
+        const btn = document.createElement("button");
+        btn.textContent = val;
+        btn.type = "button";
+        btn.style.padding = "4px 8px";
+        btn.style.fontSize = "12px";
+        btn.addEventListener("click", () => {
+          input.value = val;
+          input.dispatchEvent(new Event("input"));
+        });
+        presetContainer.appendChild(btn);
+      });
+
+      container.appendChild(presetContainer);
+      inputContainer.appendChild(container);
+
+    } else if (formulas[selected].type === "count") {
+      // 横並びの親コンテナ
+      const container = document.createElement("div");
+      container.style.display = "flex";
+      container.style.alignItems = "center";
+      container.style.gap = "8px";
+
+      // ラベル＋入力フォーム
+      const label = document.createElement("label");
+      label.textContent = "個数: ";
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.className = "count";
+      input.addEventListener("input", calculateInfusion);
+
+      label.appendChild(input);
+      container.appendChild(label);
+
+      // ボタン群のコンテナ（個数用）
+      const presetContainer = document.createElement("div");
+      presetContainer.style.display = "flex";
+      presetContainer.style.gap = "4px";
+
+      [1, 2, 3, 4].forEach((val) => {
+        const btn = document.createElement("button");
+        btn.textContent = val;
+        btn.type = "button";
+        btn.style.padding = "4px 8px";
+        btn.style.fontSize = "12px";
+        btn.addEventListener("click", () => {
+          input.value = val;
+          input.dispatchEvent(new Event("input"));
+        });
+        presetContainer.appendChild(btn);
+      });
+
+      container.appendChild(presetContainer);
+      inputContainer.appendChild(container);
+    }
+
+    calculateInfusion();
+  });
+}
+
+  
+  // 比較ボタンを作成してbodyに追加
+const compareBtn = document.createElement("button");
+compareBtn.textContent = "製剤比較(120mLあたり)";
+compareBtn.className = "compare-btn";
+compareBtn.style.marginTop = "20px";
+compareBtn.addEventListener("click", () => {
+  for (let i = 0; i < 4; i++) {
+    const select = document.querySelector(`select[data-index='${i}']`);
+    const selected = select.value;
+    if (!formulas[selected]) continue;
+
+    if (formulas[selected].type === "rate") {
+      const input = document.querySelector(`#inputContainer${i} .rate`);
+      if (input) {
+        input.value = 5;
+        input.dispatchEvent(new Event("input")); // 再計算させる
+      }
+    }
+  }
+});
+const target = document.getElementById("inputContainer3"); // 製剤4のinputContainer
+if (target && target.parentNode) {
+  target.parentNode.insertBefore(compareBtn, target.nextSibling);
+} else {
+  document.body.appendChild(compareBtn); // フォールバック
+}
+
+function calculateInfusion() {
+  let totalKcal = 0;
+  let totalProtein = 0;
+  let totalfat = 0;
+  let totalWater = 0;
+  let totalNa = 0;
+  let totalK = 0;
+  let totalNaEq = 0;
+  let totalKEq = 0;
+  let resultHTML = "";
+  
+  
+  
+  const selects = document.querySelectorAll(".formula-select");
+  selects.forEach((select, i) => {
+    const key = select.value;
+    if (!key || !formulas[key]) return;
+    const formula = formulas[key];
+    const inputDiv = document.getElementById(`inputContainer${i}`);
+
+    if (formula.type === "rate") {
+      const rateInput = inputDiv.querySelector(".rate");
+      const rate = parseFloat(rateInput?.value);
+      if (isNaN(rate) || rate <= 0) return;
+      const volume = rate * 24;
+      const kcal = volume * formula.kcalPerMl;
+      const protein = volume * formula.proteinPerMl;
+      const fat = volume * formula.fatPerMl;
+      const water = volume; // mL/h × 24 = volume(mL)
+      const na = formula.naPerMl ? volume * formula.naPerMl : 0;
+      const k = formula.kPerMl ? volume * formula.kPerMl : 0;
+      const naEq = formula.naEqPerMl ? volume * formula.naEqPerMl : 0;
+      const kEq = formula.kEqPerMl ? volume * formula.kEqPerMl : 0;
+
+      totalKcal += kcal;
+      totalProtein += protein;
+      totalfat += fat;
+      totalWater += water;
+      totalNa += na;
+      totalK += k;
+      totalNaEq += naEq;
+      totalKEq += kEq;
+
+      resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${protein.toFixed(1)}g, 脂質${Math.round(fat)}mg, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, NaEq:${Math.round(naEq)}mg, KEq:${Math.round(kEq)}mg`;
+      if (formula.memo) {
+        resultHTML += ` <span style="color:red">注意: ${formula.memo}</span>`;
+      }
+
+      
+    } else if (formula.type === "count") {
+      const countInput = inputDiv.querySelector(".count");
+      const count = parseInt(countInput?.value);
+      if (isNaN(count) || count <= 0) return;
+      const kcal = count * formula.kcalPerUnit;
+      const protein = count * formula.proteinPerUnit;
+      const fat = count * formula.fatPerMl;
+      const water = count * formula.waterPerUnit;
+      const na = formula.naPerUnit ? count * formula.naPerUnit : 0;
+      const k = formula.kPerUnit ? count * formula.kPerUnit : 0;
+      const naEq = formula.naEqPerUnit ? count * formula.naEqPerUnit : 0;
+      const kEq = formula.kEqPerUnit ? count * formula.kEqPerUnit : 0;
+
+      totalKcal += kcal;
+      totalProtein += protein;
+      totalfat += fat;
+      totalWater += water;
+      totalNa += na;
+      totalK += k;
+      totalNaEq += naEq;
+      totalKEq += kEq;
+      
+      resultHTML += `<p><strong>${formula.name}</strong>：${count} 個 → ${kcal} kcal, タンパク質${protein.toFixed(1)}g, 脂質${Math.round(fat)}g, Na:${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq`;
+      if (formula.memo) {
+        resultHTML += ` <span style="color:red">注意: ${formula.memo}</span>`;
+      }
+
+    }
+  });
+  
+
+  resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>${Math.round(totalKcal)}kcal, タンパク質${totalProtein.toFixed(1)}g, 脂質${Math.round(totalfat)}g</p>Na:${Math.round(totalNa)}mg, K:${Math.round(totalK)}mg, Na:${Math.round(totalNaEq)}mEq, K:${Math.round(totalKEq)}mEq</p>`;
+  document.getElementById("infusionResult").innerHTML = resultHTML || "<p>有効な入力がありません。</p>";  
+}
+
+
+});
+  </script>
+</body>
+</html>
