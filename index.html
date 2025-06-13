@@ -95,7 +95,14 @@
       <div id="infusionResult"></div>
     </div>
     
-  
+    <footer class="site-footer">
+  <div class="footer-content">
+    <p>&copy; 2025 栄養計画ツール. All rights reserved.　
+    <a href="./howto.html" class="footer-link">使用法</a>
+    </p>
+    
+  </div>
+</footer>
   
   
   <script>
@@ -200,17 +207,15 @@ peptamenAF: { name: "ペプタメンAF", kcalPerMl: 1.5, proteinPerMl: 0.095,fat
       },
 　highcalic: { name: "ハイカリックRF", kcalPerMl: 1.429,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0.0428
       }, 
+　BFLUID: { name: "ビーフリード", kcalPerMl: 420/1000, fatPerMl:0, proteinPerMl: 30/1000, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 35/1000, kEqPerMl: 20/1000
+      },
 　amiparen200: { name: "アミパレン200", kcalPerUnit: 80,fatPerMl:0, proteinPerUnit: 20, waterPerUnit: 200, type: "count", naPerUnit: 0, kPerUnit: 0, naEqPerUnit: 0.4,　kEqPerUnit: 0
       },
 　kidmine: { name: "キドミン200", kcalPerUnit: 14.41*4, fatPerMl:0, proteinPerUnit: 14.41,　waterPerUnit: 200, type: "count", naPerMl: 0, kPerMl: 0, naEqPerUnit:0.4, kEqPerUnit: 0
       },
 　aminoleban: { name: "アミノレバン", kcalPerMl: 39.93*4/500, fatPerMl:0, proteinPerMl: 39.93/500, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 5/100, kEqPerMl: 47/500
       },
-　propofol: { name: "プロポフォール", kcalPerMl: 1.1, proteinPerMl: 0,fatPerMl:0.1, type: "rate", naPerMl: 0, kPerMl: 0 , naEqPerMl: 0, kEqPerMl: 0
-      },
-　Intralipid: { name: "イントラリポス20%", kcalPerMl: 200/100, fatPerMl:22.2/100, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
-      },
-　BFLUID: { name: "ビーフリード", kcalPerMl: 420/1000, fatPerMl:0, proteinPerMl: 30/1000, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 35/1000, kEqPerMl: 20/1000
+  Intralipid: { name: "イントラリポス20%", kcalPerMl: 200/100, fatPerMl:22.2/100, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
       },
   soldem3: { name: "ソルデム3", kcalPerMl: 0.108,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.02
       },
@@ -223,6 +228,8 @@ peptamenAF: { name: "ペプタメンAF", kcalPerMl: 1.5, proteinPerMl: 0.095,fat
 　normalsaline: { name: "生理食塩水", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.154, kEqPerMl: 0.154
       },
 　D5W: { name: "5%ブドウ糖液", kcalPerMl: 50/250, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
+      },
+  propofol: { name: "プロポフォール", kcalPerMl: 1.1, proteinPerMl: 0,fatPerMl:0.1, type: "rate", naPerMl: 0, kPerMl: 0 , naEqPerMl: 0, kEqPerMl: 0
       },
 };
 
@@ -245,17 +252,36 @@ for (let i = 0; i < 4; i++) {
     quickArea.appendChild(btn);
   });
 
-  // セレクトメニュー生成
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.textContent = `-- 製剤${i + 1}を選択 --`;
-  select.appendChild(defaultOption);
-  for (const key in formulas) {
-    const option = document.createElement("option");
-    option.value = key;
-    option.textContent = formulas[key].name;
-    select.appendChild(option);
+const sectionTitles = {
+  0: "-経管栄養-",
+  10: "-カロリー輸液-",
+  16: "-タンパク質-",
+  19: "-脂質-",
+  20: "-その他-",
+};
+
+// セレクトメニュー生成
+const defaultOption = document.createElement("option");
+defaultOption.value = "";
+defaultOption.textContent = `-- 製剤${i + 1}を選択 --`;
+select.appendChild(defaultOption);
+
+let index = 0;
+for (const [key, formula] of Object.entries(formulas)) {
+  if (sectionTitles.hasOwnProperty(index)) {
+    const section = document.createElement("option");
+    section.disabled = true;
+    section.textContent = sectionTitles[index];
+    select.appendChild(section);
   }
+
+  const option = document.createElement("option");
+  option.value = key;
+  option.textContent = formula.name;
+  select.appendChild(option);
+
+  index++;
+}
 
   // セレクト変更時の処理
   select.addEventListener("change", function () {
@@ -422,7 +448,7 @@ function calculateInfusion() {
       totalNaEq += naEq;
       totalKEq += kEq;
 
-      resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, NaEq:${Math.round(naEq)}mg, KEq:${Math.round(kEq)}mg`;
+      resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq`;
       if (formula.memo) {
         resultHTML += ` <span style="color:red">注意: ${formula.memo}</span>`;
       }
