@@ -318,8 +318,8 @@ document.querySelectorAll(".formula-select").forEach((select) => {
       container.appendChild(label);
 
       const presetContainer = document.createElement("div");
-      presetContainer.style.display = "flex";
-      presetContainer.style.gap = "4px";
+      presetContainer.className = "preset-container";
+     
 
       [10, 20, 30, 40, 50, 60, 70].forEach((val) => {
         const btn = document.createElement("button");
@@ -366,8 +366,7 @@ document.querySelectorAll(".formula-select").forEach((select) => {
       container.appendChild(label);
 
       const presetContainer = document.createElement("div");
-      presetContainer.style.display = "flex";
-      presetContainer.style.gap = "4px";
+      presetContainer.className = "preset-container";
 
       [1, 2, 3, 4].forEach((val) => {
         const btn = document.createElement("button");
