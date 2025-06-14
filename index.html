@@ -516,7 +516,7 @@ function calculateInfusion() {
   const carbRatio =  totalWater > 0 ? (100-fatRatio-proteinRatio > 0 ? 100-fatRatio-proteinRatio : 0):0;
   
   resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>`;
-  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio.toFixed(1)}% タンパク質: ${proteinRatio.toFixed(1)}% 脂質: ${fatRatio.toFixed(1)}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
+  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
   resultHTML += `<p>Na: ${Math.round(totalNa)} mg, K: ${Math.round(totalK)} mg, Na: ${Math.round(totalNaEq)} mEq, K: ${Math.round(totalKEq)} mEq　(経管栄養はmg, 輸液はmEqでそれぞれ合算)</p>`;
 
   // 重複なしメモ表示
