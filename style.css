@@ -151,8 +151,8 @@ input[type="number"] {
 }
 
 /* 速度・個数・OFF ボタン共通デザイン */
-.preset-btn {
-  padding: 4px 8px;
+  .preset-btn {
+  padding: 4px 8px; /* 少し横に余裕 */
   font-size: 12px;
   background-color: #fff;
   color: #333;
@@ -161,20 +161,20 @@ input[type="number"] {
   cursor: pointer;
 }
 
+.preset-container {
+  display: flex;
+  gap: 4px; /* ボタン同士の間隔 */
+
+}
+
 /* ホバー時の反応 */
 .preset-btn:hover {
   background-color: #f0f0f0;
 }
 
-/* OFFボタンだけ強調したい場合 */
-.preset-btn.off {
-  background-color: #fff;
-  border-color: #f44336;
-  color: #f44336;
-}
-.preset-btn.off:hover {
-  background-color: #fdecea;
-}
+
+
+
 
 /* ▼▼▼ レスポンシブ対応 ▼▼▼ */
 @media screen and (max-width: 560px) {
@@ -218,8 +218,8 @@ input[type="number"] {
     width: 100%;
   }
   
-  .preset-btn {
-  padding: 2px 2px;
+.preset-btn {
+  padding: 4px 8px; /* 少し横に余裕 */
   font-size: 10px;
   background-color: #fff;
   color: #333;
@@ -227,6 +227,15 @@ input[type="number"] {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.preset-container {
+  display: flex;
+  gap: 4px; /* ボタン同士の間隔 */
+  max-width: 100%; /* 必要に応じて制限 */
+  flex-wrap: wrap; /* ここを追加 */
+
+}
+
 
 /* ホバー時の反応 */
 .preset-btn:hover {
