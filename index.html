@@ -179,24 +179,26 @@ function calculateNeeds() {
 const formulas = {
 peptamenAF: { name: "ペプタメンAF", kcalPerMl: 1.5, proteinPerMl: 0.095,fatPerMl:0.066, type: "rate", naPerMl: 2.63, kPerMl: 2.32 , naEqPerMl: 0, kEqPerMl: 0
       },
-    renalmp: {name: "リーナレンMP", kcalPerMl: 200 / 125, proteinPerMl: 7.0 / 125, fatPerMl: 5.6 / 125,type: "rate",naPerMl: 120/125,    kPerMl: 60 / 125,naEqPerMl:0,  kEqPerMl:0
+    terumeal2_0a: { name: "テルミール2.0α", kcalPerMl: 2.0,fatPerMl:0.075,proteinPerMl: 0.0725, type: "rate", naPerMl: 1, kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
       },
     recoverymini: { name: "リカバリーmini", kcalPerMl: 1.6,fatPerMl:0.06,proteinPerMl: 0.064, type: "rate", naPerMl: 1.84, kPerMl: 1.44, naEqPerMl: 0, kEqPerMl: 0
       },
-    mainbalance: { name: "メイン", kcalPerMl: 1,fatPerMl:0.028,proteinPerMl: 0.05, type: "rate", naPerMl: 0.7, kPerMl: 0.8, naEqPerMl: 0, kEqPerMl: 0
-      },
     hinexre: { name: "ハイネックスリニュート", kcalPerMl: 1,fatPerMl:22.4/400,　proteinPerMl: 0.06, type: "rate", naPerMl: 1.59, 　 kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
       },
+    renalmp: {name: "リーナレンMP", kcalPerMl: 200 / 125, proteinPerMl: 7.0 / 125, fatPerMl: 5.6 / 125,type: "rate",naPerMl: 120/125,    kPerMl: 60 / 125,naEqPerMl:0,  kEqPerMl:0
+      },
+    CZ_Hi: { name: "CZ_Hi", kcalPerMl: 1.0,fatPerMl:0.022,proteinPerMl: 0.05, type: "rate", naPerMl: 0.9, kPerMl: 1.5, naEqPerMl: 0, kEqPerMl: 0
+      },
+    mainbalance: { name: "メイン", kcalPerMl: 1,fatPerMl:0.028,proteinPerMl: 0.05, type: "rate", naPerMl: 0.7, kPerMl: 0.8, naEqPerMl: 0, kEqPerMl: 0
+      },
+    ELENTAL: { name: "エレンタール80g/300mL", kcalPerMl: 300/300, fatPerMl:0.51/300, proteinPerMl: 14.1/300, type: "rate", naPerMl: 260/300, kPerMl: 217.6/300, naEqPerMl: 0, kEqPerMl: 0
+      },
+    marmedone: { name: "マーメッドワン", kcalPerMl: 300/300, fatPerMl:11.4/300, proteinPerMl: 12/300, type: "rate", naPerMl: 420/300, kPerMl: 495/300, naEqPerMl:0, kEqPerMl: 0
+      },
+    
     renawell: { name: "レナウェル3", kcalPerMl: 200/125,fatPerMl:8.9/125,proteinPerMl: 3/125, type: "rate", naPerMl: 60/125, kPerMl: 20/125, naEqPerMl: 0, kEqPerMl: 0
       },
-    terumeal2_0a: { name: "テルミール2.0α", kcalPerMl: 2.0,fatPerMl:0.075,proteinPerMl: 0.0725, type: "rate", naPerMl: 1, kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
-      },
-  CZ_Hi: { name: "CZ_Hi", kcalPerMl: 1.0,fatPerMl:0.022,proteinPerMl: 0.05, type: "rate", naPerMl: 0.9, kPerMl: 1.5, naEqPerMl: 0, kEqPerMl: 0
-      },
- ELENTAL: { name: "エレンタール80g/300mL", kcalPerMl: 300/300, fatPerMl:0.51/300, proteinPerMl: 14.1/300, type: "rate", naPerMl: 260/300, kPerMl: 217.6/300, naEqPerMl: 0, kEqPerMl: 0
-      },
-  marmedone: { name: "マーメッドワン", kcalPerMl: 300/300, fatPerMl:11.4/300, proteinPerMl: 12/300, type: "rate", naPerMl: 420/300, kPerMl: 495/300, naEqPerMl:0, kEqPerMl: 0
-      },
+
   elneopaNF1: { name: "エルネオパNF1", kcalPerMl: 0.56,fatPerMl:0, proteinPerMl: 0.02, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.022
        },
   elneopaNF2: { name: "エルネオパNF2", kcalPerMl: 0.82,fatPerMl:0, proteinPerMl: 0.03, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.027
@@ -237,7 +239,7 @@ propofol: { name: "プロポフォール", kcalPerMl: 1.1, proteinPerMl: 0,fatPe
       },
 };
 
-const quickList = ["peptamenAF", "renalmp", "recoverymini", "renawell", "hinexre", "propofol"];
+const quickList = ["peptamenAF",　"recoverymini", "hinexre",　"renalmp",  "renawell",  "propofol"];
 
 for (let i = 0; i < 4; i++) {
   const quickArea = document.getElementById(`quick${i + 1}`);
@@ -508,13 +510,13 @@ function calculateInfusion() {
     }
   });
 
-  // カロリー計算と割合は変わらず  const proteinKcal = totalProtein * 4;
+  // カロリー計算と割合は変わらず
   const proteinKcal = totalProtein * 4;
   const fatKcal = totalfat * 9;
   const proteinRatio = Math.round(isNaN(proteinKcal / totalKcal) ? 0 : (proteinKcal / totalKcal) * 100);
   const fatRatio = Math.round(isNaN(fatKcal / totalKcal) ? 0 : (fatKcal / totalKcal) * 100);
   const carbRatio =  totalWater > 0 ? (100-fatRatio-proteinRatio > 0 ? 100-fatRatio-proteinRatio : 0):0;
-  
+
   resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>`;
   resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
   resultHTML += `<p>Na: ${Math.round(totalNa)} mg, K: ${Math.round(totalK)} mg, Na: ${Math.round(totalNaEq)} mEq, K: ${Math.round(totalKEq)} mEq　(経管栄養はmg, 輸液はmEqでそれぞれ合算)</p>`;
