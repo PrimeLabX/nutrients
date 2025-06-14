@@ -44,6 +44,30 @@
     display: block;
     margin-bottom: 5px;
   }
+  
+
+.site-footer {
+  color: #666;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 14px;
+  margin-top: 40px;
+}
+
+.footer-content p {
+  margin: 5px 0;
+}
+
+.footer-link {
+  color: #007BFF;
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
 }
 
 body {
