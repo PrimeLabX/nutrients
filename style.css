@@ -150,6 +150,32 @@ input[type="number"] {
   text-decoration: underline;
 }
 
+/* 速度・個数・OFF ボタン共通デザイン */
+.preset-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ホバー時の反応 */
+.preset-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* OFFボタンだけ強調したい場合 */
+.preset-btn.off {
+  background-color: #fff;
+  border-color: #f44336;
+  color: #f44336;
+}
+.preset-btn.off:hover {
+  background-color: #fdecea;
+}
+
 /* ▼▼▼ レスポンシブ対応 ▼▼▼ */
 @media screen and (max-width: 560px) {
   body {
@@ -157,15 +183,17 @@ input[type="number"] {
   }
 
   .tab-button,
-  .formula-btn,
   .gender-btn,
-  label,
-  input[type="number"] {
+  label,{
     font-size: 18px;
+  }
+  .formula-btn,
+  input[type="number"]{
+    font-size: 10px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-size: 1.4em;
+    font-size: 1em;
   }
 
   .tab-container {
@@ -189,4 +217,19 @@ input[type="number"] {
   input[type="number"] {
     width: 100%;
   }
+  
+  .preset-btn {
+  padding: 2px 2px;
+  font-size: 10px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ホバー時の反応 */
+.preset-btn:hover {
+  background-color: #f0f0f0;
+}
 }
