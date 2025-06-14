@@ -511,13 +511,9 @@ function calculateInfusion() {
   // カロリー計算と割合は変わらず
   const proteinKcal = totalProtein * 4;
   const fatKcal = totalfat * 9;
-  const carbKcal = totalKcal - proteinKcal - fatKcal;
-  const carbKcalCorrected = carbKcal < 0 ? 0 : carbKcal;
-
-  const totalKcalForRatio = proteinKcal + fatKcal + carbKcalCorrected;
-  const proteinRatio = totalKcalForRatio ? (proteinKcal / totalKcalForRatio) * 100 : 0;
-  const fatRatio = totalKcalForRatio ? (fatKcal / totalKcalForRatio) * 100 : 0;
-  const carbRatio = totalKcalForRatio ? (carbKcalCorrected / totalKcalForRatio) * 100 : 0;
+  const proteinRatio = (proteinKcal / totalKcal) * 100;
+  const fatRatio = (fatKcal / totalKcal) * 100;
+  const carbRatio =  100-fatRatio-proteinRatio > 0 ? 100-fatRatio-proteinRatio : 0;
 
   resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>`;
   resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio.toFixed(1)}% タンパク質: ${proteinRatio.toFixed(1)}% 脂質: ${fatRatio.toFixed(1)}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
