@@ -1,59 +1,27 @@
-
-/* ▼▼▼ レスポンシブ対応 ▼▼▼ */
-@media screen and (max–width: 560){
-  body {
-    font-size: 18px;
-    background: green;
-  }
-  .tab-button,
-  .formula-btn,
-  .gender-btn,
-  label,
-  input[type="number"] {
-    font-size: 18px;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 1.4em;
-  }
-  
-  .tab-container {
-    flex-direction: column;
-  }
-
-  .tab-button {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-  .formula-group {
-    flex-direction: column;
-  }
-
-  .gender-btn {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-
-  input[type="number"] {
-    width: 100%;
-  }
-
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-}
-
-body {
+/* HTMLとbodyの高さを100%に設定 */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: sans-serif;
-  margin: 20px;
-  max-width: 960px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
+/* ラッパー全体の高さを画面いっぱいにし、縦並びに設定 */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* メインコンテンツはflexで余白を埋めるように伸ばす */
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* タブボタン */
 .tab-container {
   display: flex;
   flex-wrap: wrap;
@@ -126,8 +94,7 @@ body {
   color: white;
 }
 
-
-
+/* 数値入力 */
 #rateInputContainer {
   display: none;
   margin-top: 10px;
@@ -136,6 +103,8 @@ body {
 label {
   font-size: 16px;
   margin-right: 5px;
+  display: inline-block;
+  margin-bottom: 5px;
 }
 
 input[type="number"] {
@@ -144,31 +113,27 @@ input[type="number"] {
   width: 100%;
   max-width: 150px;
   box-sizing: border-box;
-
 }
 
-  .compare-btn {
-      display: block;  
-      margin: 20px auto 0;  
+/* 比較ボタン */
+.compare-btn {
+  display: block;
+  margin: 20px auto 0;
   width: auto;
-  display: inline-block;
-  flex: 0 0 auto;
-  align-self: flex-start;
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  background-color: #ffffff;  /* ← 白に変更 */
+  background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-
+/* フッター */
 .site-footer {
   color: #666;
   text-align: center;
   padding: 20px 10px;
   font-size: 14px;
-  margin-top: 40px;
 }
 
 .footer-content p {
@@ -183,4 +148,45 @@ input[type="number"] {
 
 .footer-link:hover {
   text-decoration: underline;
+}
+
+/* ▼▼▼ レスポンシブ対応 ▼▼▼ */
+@media screen and (max-width: 560px) {
+  body {
+    font-size: 18px;
+  }
+
+  .tab-button,
+  .formula-btn,
+  .gender-btn,
+  label,
+  input[type="number"] {
+    font-size: 18px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.4em;
+  }
+
+  .tab-container {
+    flex-direction: column;
+  }
+
+  .tab-button {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .formula-group {
+    flex-direction: column;
+  }
+
+  .gender-btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  input[type="number"] {
+    width: 100%;
+  }
 }
