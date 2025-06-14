@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>使用法 - 栄養システム</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      background-color: #004466;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem 0;
+    }
+
+    label.nav-tab {
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    /* ラジオボタン非表示 */
+    input[type="radio"] {
+      display: none;
+    }
+
+    /* セクションの初期状態は非表示 */
+    .tab-content {
+      display: none;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+
+    /* 選択されたタブの内容を表示 */
+    #tab1:checked ~ .contents #content1,
+    #tab2:checked ~ .contents #content2 {
+      display: block;
+    }
+
+    /* アクティブタブのスタイル変更 */
+    #tab1:checked ~ nav label[for="tab1"],
+    #tab2:checked ~ nav label[for="tab2"] {
+      text-decoration: underline;
+    }
+     img {
+      max-width: 80%;
+      max-height: 500px;
+      height: auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ラジオボタン（非表示） -->
+  <input type="radio" name="tabs" id="tab1" checked />
+  <input type="radio" name="tabs" id="tab2" />
+
+  <!-- ナビゲーションバー -->
+  <nav>
+    <label for="tab1" class="nav-tab">アプリ化</label>
+    <label for="tab2" class="nav-tab">栄養システム利用法</label>
+  </nav>
+
+  <!-- タブの内容 -->
+  <div class="contents">
+    <div id="content1" class="tab-content">
+      <h2>アプリ化</h2>
+      <p>
+        スマートフォンでこのWebアプリをホーム画面に追加すると、アプリのように使えます。<br />
+        <strong>iPhone：</strong>Safariの「共有」→「ホーム画面に追加」<br />
+        <strong>Android：</strong>ブラウザメニュー →「ホーム画面に追加」
+      </p>
+      <img src="makeitapp.jpeg" alt="アプリ化の例">
+    </div>
+
+    <div id="content2" class="tab-content">
+      <h2>栄養システム利用法</h2>
+      <img src="ncalhowto.jpg" alt="使用法">
+      <p>
+        クイックメニューから使用する製剤を選択できます。他の製剤を使用する場合は詳細メニューから選択してください。<br>アミパレンなど1パックずつ投与する製剤は個数入力となっています。個数を手動入力する際は小数点第一位まで入力可能です。
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
