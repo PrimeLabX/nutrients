@@ -207,9 +207,11 @@ const formulas = {
       },
 　highcalic: { name: "ハイカリックRF", kcalPerMl: 1.429,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0.0428
       }, 
-  highcalicamiparen: { name: "HA", kcalPerMl: 580/450,fatPerMl:0, proteinPerMl: 20/450, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 12.9/450, kEqPerMl: 0, memo:"ハイカリック250,アミパレン200"
+  highcalicamiparen: { name: "HA", kcalPerMl: 580/450,fatPerMl:0, proteinPerMl: 20/450, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 12.9/450, kEqPerMl: 0, memo:"ハイカリックRF250,アミパレン200"
       }, 
-  highcalic2amiparen: { name: "H2A", kcalPerMl: 660/650,fatPerMl:0, proteinPerMl: 40/650, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 13.3/650, kEqPerMl: 0, memo:"ハイカリック250,アミパレン400"
+  highcalic2amiparen: { name: "H2A", kcalPerMl: 660/650,fatPerMl:0, proteinPerMl: 40/650, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 13.3/650, kEqPerMl: 0, memo:"ハイカリックRF250,アミパレン400"
+      }, 
+  highcalic3amiparen: { name: "H3A", kcalPerMl: 740/850,fatPerMl:0, proteinPerMl: 60/850, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 13.7/850, kEqPerMl: 0, memo:"ハイカリックRF250,アミパレン600"
       }, 
 　BFLUID: { name: "ビーフリード", kcalPerUnit: 210, fatPerUnit:0, proteinPerUnit: 15, type: "count", waterPerUnit: 500, naPerUnit: 0, kPerUnit: 0, naEqPerUnit: 17.5, kEqPerUnit: 10,memo: "同一パックで８時間以上の持続点滴や他剤混注は菌血症リスクのため非推奨"
       },
@@ -265,9 +267,9 @@ for (let i = 0; i < 4; i++) {
 const sectionTitles = {
   0: "-経管栄養-",
   10: "-カロリー輸液-",
-  18: "-タンパク質-",
-  21: "-脂質-",
-  22: "-その他-",
+  19: "-タンパク質-",
+  22: "-脂質-",
+  23: "-その他-",
 };
 
 // セレクトメニュー生成
