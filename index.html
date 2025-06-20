@@ -221,9 +221,9 @@ function calculateNeeds() {
   let note = "";
   if (obesityCheckOn && bmi !== null) {
     if (usedAdjustedWeight) {
-      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（肥満のため調整体重 ${baseWeight.toFixed(1)} kg で計算、調整体重＝理想体重＋（0.225（実体重- 理想体重）））</p>`;
+      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（BMI>30のため ${baseWeight.toFixed(1)} kg で計算、調整体重＝理想体重＋（0.225（実体重- 理想体重）））</p>`;
     } else {
-      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（肥満なし：実体重で計算）</p>`;
+      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（実体重で計算）</p>`;
     }
   }
 
