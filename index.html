@@ -61,6 +61,18 @@
           </select>
         </label>
       </div>
+      
+      <!-- 肥満チェックボタン -->
+<!-- 肥満チェックボタン -->
+<div>
+  <button id="checkObesity">肥満チェック</button>
+</div>
+
+<!-- 身長入力欄（初期非表示）-->
+<div id="heightInputArea" style="display: none;">
+  <label>身長 (cm): <input type="number" id="heightInput" min="0" /></label>
+</div>
+
       <div id="needsResult"></div>
     </div>
 
@@ -130,6 +142,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+
+
+//必要栄養量計算タブ
   const weightInput = document.getElementById("weightInput");
   const kcalFactorInput = document.getElementById("kcalFactorInput");
   const conditionSelect = document.getElementById("conditionSelect");
@@ -139,11 +154,32 @@ document.addEventListener("DOMContentLoaded", function () {
     calculateNeeds();
   });
   conditionSelect.addEventListener("change", calculateNeeds);
-  
 
+let obesityCheckOn = false; // 初期状態はOFF
+
+document.getElementById("checkObesity").addEventListener("click", function () {
+  obesityCheckOn = !obesityCheckOn;
+  const heightArea = document.getElementById("heightInputArea");
+  const button = document.getElementById("checkObesity");
+
+  if (obesityCheckOn) {
+    heightArea.style.display = "block";
+  } else {
+    heightArea.style.display = "none";
+  }
+
+  calculateNeeds(); // 状態変更時に再計算
+});
+document.getElementById("heightInput").addEventListener("input", function () {
+  if (obesityCheckOn) {
+    calculateNeeds();
+  }
+});
+  
 
 function calculateNeeds() {
   const weight = parseFloat(weightInput.value);
+  const height = parseFloat(document.getElementById("heightInput").value);
   const kcalFactor = parseFloat(kcalFactorInput.value);
   const selectedOption = conditionSelect.options[conditionSelect.selectedIndex];
 
@@ -155,24 +191,50 @@ function calculateNeeds() {
     return;
   }
 
-  const totalKcal = weight * kcalFactor;
-  const totalProteinMin = weight * proteinMin;
-  const totalProteinMax = weight * proteinMax;
+  let baseWeight = weight;
+  let bmi = null;
+  let usedAdjustedWeight = false;
+
+  if (obesityCheckOn && !isNaN(height) && height > 0) {
+    const heightM = height / 100;
+    bmi = weight / (heightM * heightM);
+
+    if (bmi >= 30) {
+      const idealWeight = 22 * (heightM * heightM);
+      const adjustedWeight = idealWeight + 0.225 * (weight - idealWeight);
+      baseWeight = adjustedWeight;
+      usedAdjustedWeight = true;
+    }
+  }
+
+  const totalKcal = baseWeight * kcalFactor;
+  const totalProteinMin = baseWeight * proteinMin;
+  const totalProteinMax = baseWeight * proteinMax;
 
   let proteinDisplay = "";
-
   if (proteinMin === proteinMax) {
     proteinDisplay = `${totalProteinMin.toFixed(1)} g/day`;
   } else {
     proteinDisplay = `${totalProteinMin.toFixed(1)} ～ ${totalProteinMax.toFixed(1)} g/day`;
   }
 
+  let note = "";
+  if (obesityCheckOn && bmi !== null) {
+    if (usedAdjustedWeight) {
+      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（肥満のため調整体重 ${baseWeight.toFixed(1)} kg で計算、調整体重＝理想体重＋（0.225（実体重- 理想体重）））</p>`;
+    } else {
+      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（肥満なし：実体重で計算）</p>`;
+    }
+  }
+
   document.getElementById("needsResult").innerHTML = `
     <hr>
+    ${note}
     <p><strong>必要カロリー:</strong> ${Math.round(totalKcal)} kcal/day</p>
     <p><strong>必要タンパク量:</strong> ${proteinDisplay}</p>
   `;
 }
+
 
 //栄養製剤計算
 // 製剤定義
