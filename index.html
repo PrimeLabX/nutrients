@@ -113,7 +113,7 @@
     <!-- HAIタブ -->
   <div id="hai" class="tab-content">
     <h2>オリジナル製剤設計(HighcalicRF,Amiparen,Intralipid)</h2>
-    <p>必要エネルギー: <span id="default-calorie"></span>kcal, タンパク: <span id="default-protein"></span>g (必要栄養量タブで計算可能)</p>
+    <p>必要エネルギー: <span id="default-calorie"></span>kcal, タンパク: <span id="default-protein"></span>g (必要栄養量タブから結果引き継ぎ)</p>
     
     <label>総カロリー (kcal):
       <input id="input-calorie" type="number" step="1">
@@ -673,14 +673,24 @@ function calculateInfusion() {
 //hai
 
 function initHAI() {
+  const calorieEl = document.getElementById("default-calorie");
+  const proteinEl = document.getElementById("default-protein");
+  const infoParagraph = calorieEl.closest("p"); // <p> タグ全体を取得
 
-  // 表示専用エリアに表示
-  document.getElementById("default-calorie").textContent = calorieNeeds.toFixed(0);
-  let proteinDisplay = protein_min === protein_max
-    ? protein_min.toFixed(1)
-    : `${protein_min.toFixed(1)}〜${protein_max.toFixed(1)}`;
-  document.getElementById("default-protein").textContent = proteinDisplay;
+  if (calorieNeeds > 0 && protein_min > 0) {
+    // 表示更新
+    calorieEl.textContent = calorieNeeds.toFixed(0);
+    let proteinDisplay = protein_min === protein_max
+      ? protein_min.toFixed(1)
+      : `${protein_min.toFixed(1)}〜${protein_max.toFixed(1)}`;
+    proteinEl.textContent = proteinDisplay;
 
+    // <p>を表示
+    infoParagraph.style.display = "block";
+  } else {
+    // <p>を非表示
+    infoParagraph.style.display = "none";
+  }
 
   calculateHAI(); // 初期計算
 }
