@@ -23,7 +23,7 @@
     <div class="tab-container">
       <button class="tab-button active" data-target="formulas">栄養製剤</button>
       <button class="tab-button" data-target="needs">必要栄養量</button>
-      <button class="tab-button" data-target="hai">HAI</button>
+      <button class="tab-button" data-target="hai">オリジナル</button>
     </div>
 
     <!-- 必要栄養量タブ -->
@@ -112,9 +112,8 @@
     
     <!-- HAIタブ -->
   <div id="hai" class="tab-content">
-    <h2>HAI製剤設計(HighcalicRF,Amiparen,Intralipid)</h2>
-    <h2>こちらのページは現在工事中です。プロポフォールボタンは使えません</h2>
-    <p>必要エネルギー: <span id="default-calorie"></span>kcal, タンパク: <span id="default-protein"></span>g (必要栄養量タブで計算も可能)</p>
+    <h2>オリジナル製剤設計(HighcalicRF,Amiparen,Intralipid)</h2>
+    <p>必要エネルギー: <span id="default-calorie"></span>kcal, タンパク: <span id="default-protein"></span>g (必要栄養量タブで計算可能)</p>
     
     <label>総カロリー (kcal):
       <input id="input-calorie" type="number" step="1">
@@ -160,8 +159,9 @@ function roundToOneDecimals(num) {
   return Math.round(num * 10) / 10;
 }
 
+
+var  protein_max = 0;
 var protein_min = 0;
-var protein_max = 0;
 var calorieNeeds = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const isVisible = propofolInputArea.style.display === "block";
     propofolInputArea.style.display = isVisible ? "none" : "block";
     toggleButton.textContent = isVisible ? "プロポフォール ON" : "プロポフォール OFF";
+    calculateHAI(); // ← 追加！
   });
   
   // タブ切り替え
@@ -267,8 +268,12 @@ function calculateNeeds() {
   let proteinDisplay = "";
   if (proteinMin === proteinMax) {
     proteinDisplay = `${totalProteinMin.toFixed(1)} g/day`;
+    protein_max = totalProteinMax
+    protein_min  = totalProteinMin;
   } else {
     proteinDisplay = `${totalProteinMin.toFixed(1)} ～ ${totalProteinMax.toFixed(1)} g/day`;
+    protein_max = totalProteinMax
+    protein_min  = totalProteinMin;
   }
 
   let note = "";
@@ -279,6 +284,16 @@ function calculateNeeds() {
       note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（BMI<30のため実体重で栄養計算）</p>`;
     }
   }
+  
+  calorieNeeds = totalKcal
+  
+  
+  // 平均タンパク量（初期値として使用）
+  var proteinAvg = ((protein_min + protein_max) / 2).toFixed(1);
+  document.getElementById("input-calorie").value = calorieNeeds.toFixed(0);
+  document.getElementById("input-protein").value = proteinAvg;
+  document.getElementById("input-fat").value = 0;
+  
 
   document.getElementById("needsResult").innerHTML = `
     <hr>
@@ -656,63 +671,76 @@ function calculateInfusion() {
 }
 
 //hai
+
 function initHAI() {
-  // protein_min, protein_max が有効かどうかをチェック
-  //if (protein_min === 0 && protein_max === 0) {
-    //alert("先に『必要栄養量』を入力してください。");
-    //return;
-  //}
 
-  var proteinAvg = ((protein_min + protein_max) / 2).toFixed(1);
-
-  // 表示に反映
-  document.getElementById("default-calorie").textContent = calorieNeeds;
-  let proteinDisplay = "";
-  if (protein_min === protein_max) {
-    proteinDisplay = protein_min.toFixed(1); // 小数1桁で統一
-  } else {
-    proteinDisplay = `${protein_min.toFixed(1)}〜${protein_max.toFixed(1)}`;
-  }
+  // 表示専用エリアに表示
+  document.getElementById("default-calorie").textContent = calorieNeeds.toFixed(0);
+  let proteinDisplay = protein_min === protein_max
+    ? protein_min.toFixed(1)
+    : `${protein_min.toFixed(1)}〜${protein_max.toFixed(1)}`;
   document.getElementById("default-protein").textContent = proteinDisplay;
 
-  
-  // 入力要素取得
-  var proteinInput = document.getElementById("input-protein");
-  var fatInput = document.getElementById("input-fat");
-  var calorieInput = document.getElementById("input-calorie");
 
-  // 初期値代入
-  proteinInput.value = proteinAvg;
-  fatInput.value = 0;
-  calorieInput.value = calorieNeeds;
+  calculateHAI(); // 初期計算
+}
 
-  function calculate() {
-    var protein = parseFloat(proteinInput.value) || 0;
-    var fat = parseFloat(fatInput.value) || 0;
-    var totalKcal = parseFloat(calorieInput.value) || 0;
-    
-    var propofolRate = parseFloat(document.getElementById("propofol-rate")?.value) || 0;
-    var propofolFat = propofolRate * 24 * 0.1; // mL/h × 24h × 0.1g/mL
-    var totalFat = fat + propofolFat;
 
-    var amiparenMl = protein * 10;
-    var kcalFromPF = protein * 4 + fat * 9;
-    var residualKcal = totalKcal - kcalFromPF;
-    var haikalykMl = residualKcal > 0 ? (residualKcal / 2) : 0;
+function calculateHAI() {
+  var protein = parseFloat(document.getElementById("input-protein").value) || 0;
+  var fat = parseFloat(document.getElementById("input-fat").value) || 0;
+  var totalKcal = parseFloat(document.getElementById("input-calorie").value) || 0;
 
-    document.getElementById("amiparen-ml").textContent = amiparenMl.toFixed(1);
-    document.getElementById("haikalyk-ml").textContent = haikalykMl.toFixed(1);
+  var propofolRate = 0;
+  if (document.getElementById("propofol-input-area").style.display !== "none") {
+    propofolRate = parseFloat(document.getElementById("propofol-rate")?.value) || 0;
   }
 
-  // 入力変更時に再計算
-  proteinInput.addEventListener("input", calculate);
-  fatInput.addEventListener("input", calculate);
-  calorieInput.addEventListener("input", calculate);
-  document.getElementById("propofol-rate").addEventListener("input", calculate);
+  var propofolKcal = propofolRate * 24 * 1.1;
+  var kcalFromProtein = protein * 4;
+  var kcalFromFat = fat * 9;
+  var kcalFromPF = kcalFromProtein + kcalFromFat + propofolKcal;
 
-  // 初期計算
-  calculate();
-}      
+  var amiparenMl = protein * 10;
+  var residualKcal = totalKcal - kcalFromPF;
+  var haikalykMl = residualKcal > 0 ? residualKcal / 2 : 0;
+
+  var pPct = totalKcal > 0 ? (kcalFromProtein / totalKcal) * 100 : 0;
+  var fPct = totalKcal > 0 ? ((kcalFromFat + propofolKcal) / totalKcal) * 100 : 0;
+  var cPct = totalKcal > 0 ? 100 - pPct - fPct : 0;
+
+  document.getElementById("amiparen-ml").textContent = amiparenMl.toFixed(1);
+  document.getElementById("haikalyk-ml").textContent = haikalykMl.toFixed(1);
+
+  // --- カロリー構成の表示 ---
+  let ratioEl = document.getElementById("nutrient-ratio");
+  if (!ratioEl) {
+    ratioEl = document.createElement("p");
+    ratioEl.id = "nutrient-ratio";
+    const reference = document.getElementById("haikalyk-ml").parentElement;
+    reference.parentNode.insertBefore(ratioEl, reference.nextSibling);
+  }
+  ratioEl.innerHTML = `カロリー構成: 炭水化物 ${cPct.toFixed(0)}%、タンパク質 ${pPct.toFixed(0)}%、脂質 ${fPct.toFixed(0)}%`;
+
+  // --- 総カロリーオーバー時のエラー表示 ---
+  let errorEl = document.getElementById("calorie-over-error");
+  if (!errorEl) {
+    errorEl = document.createElement("p");
+    errorEl.id = "calorie-over-error";
+    errorEl.style.color = "red";
+    const reference = ratioEl;
+    reference.parentNode.insertBefore(errorEl, reference.nextSibling);
+  }
+  if (kcalFromPF > totalKcal) {
+    errorEl.textContent = "⚠️ 必要タンパク,脂質量により総カロリーを超過しています。見直してください。";
+  } else {
+    errorEl.textContent = ""; // エラーがなければ非表示
+  }
+}
+document.getElementById("input-protein").addEventListener("input", calculateHAI);
+document.getElementById("input-fat").addEventListener("input", calculateHAI);
+document.getElementById("input-calorie").addEventListener("input", calculateHAI);
+document.getElementById("propofol-rate").addEventListener("input", calculateHAI);      
 
 });
   </script>
