@@ -65,19 +65,55 @@
       </div>
        <!-- 肥満チェックボタン -->
 <!-- 肥満チェックボタン -->
-<div>
-  <button id="checkObesity">BMIチェック</button>
-</div>
+  <div>
+    <button id="checkObesity">肥満患者（調整体重）</button>
+  </div>
 
 <!-- 身長入力欄（初期非表示）-->
 <div id="heightInputArea" style="display: none;">
   <label>身長 (cm): <input type="number" id="heightInput" min="0" /></label>
 </div>
 
-      <div id="needsResult"></div>
-    </div>
+ <!-- Refeeding リスク評価 UI -->
+<div>
+  <button id="toggleRefeedingRisk">Refeedingリスク評価</button>
+</div>
+<div id="refeedingRiskArea" style="display: none; border: 1px solid #ccc; padding: 1em; margin-top: 1em;">
+  <h3>NICE基準に基づいたRefeeding症候群のリスク評価</h3>
+  
+  <div class="option-group">
+    <p>体重減少 (3〜6カ月で):</p>
+    <button class="loss-btn" data-value="15">15%以上</button>
+    <button class="loss-btn" data-value="10">10〜15%</button>
+    <button class="loss-btn"　data-value="0">10%未満</button>
+  </div>
+  <div class="option-group">
+    <p>絶食期間:</p>
+    <button class="fast-btn" data-value="10">10日以上</button>
+    <button class="fast-btn" data-value="5">5〜10日</button>
+    <button class="fast-btn" data-value="0">5日未満</button>
+  </div>
+  <div class="option-group">
+    <p>低K/P/Mg:</p>
+    <button class="elect-btn" data-value="yes">はい</button>
+    <button class="elect-btn" data-value="no">いいえ</button>
+  </div>
+  <div class="option-group">
+    <p>アルコール依存、インスリン、抗癌、制酸剤、利尿薬の服用:</p>
+    <button class="med-btn" data-value="yes">はい</button>
+    <button class="med-btn" data-value="no">いいえ</button>
+  </div>
+  
+    <div id="refeedHeightArea">
+    <p><label>身長 (cm): <input type="number" id="refeedHeight" /></label></p>
+    <p id="bmiDisplay" style="margin-top: 0.5em; font-weight: bold;"></p>
+  </div>
+  
+  <div id="refeedingRiskResult" style="margin-top:1em;"></div>
+</div>
 
-
+  <div id="needsResult"></div>
+</div>
     <!-- 栄養製剤タブ -->
     <div id="formulas" class="tab-content active">
       <h2>栄養製剤の投与量</h2>
@@ -243,9 +279,11 @@ function calculateNeeds() {
 
   const proteinMin = parseFloat(selectedOption.dataset.min);
   const proteinMax = parseFloat(selectedOption.dataset.max);
+  
+  calculateRefeedingRisk();
 
   if (isNaN(weight) || weight <= 0 || isNaN(proteinMin) || isNaN(proteinMax)) {
-    document.getElementById("needsResult").innerHTML = "<p>体重と病態を正しく入力してください。</p>";
+    document.getElementById("needsResult").innerHTML = "<p>体重（半角数字）と病態を正しく入力してください。</p>";
     return;
   }
 
@@ -283,7 +321,7 @@ function calculateNeeds() {
   let note = "";
   if (obesityCheckOn && bmi !== null) {
     if (usedAdjustedWeight) {
-      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（BMI>=30のため調整体重${baseWeight.toFixed(1)}kgで栄養計算(調整体重＝理想体重＋(0.225(実体重- 理想体重))))</p>`;
+      note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（BMI>=30のため調整体重${baseWeight.toFixed(1)}kg(＝理想体重＋(0.225(実体重- 理想体重)))で栄養計算)</p>`;
     } else {
       note = `<p><strong>BMI:</strong> ${bmi.toFixed(1)}（BMI<30のため実体重で栄養計算）</p>`;
     }
@@ -307,6 +345,124 @@ function calculateNeeds() {
   `;
 }
 
+let refeedLoss = null, refeedFast = null, refeedElect = null, refeedMed = null;
+function calculateRefeedingRisk() {
+  const weight = parseFloat(document.getElementById("weightInput").value);
+  const height = parseFloat(document.getElementById("refeedHeight").value);
+  const resultEl = document.getElementById("refeedingRiskResult");
+
+  const hasWeight = !isNaN(weight) && weight > 0;
+  const hasHeight = !isNaN(height) && height > 0;
+
+  let bmi = null;
+  if (hasWeight && hasHeight) {
+    bmi = weight / ((height / 100) ** 2);
+  }
+
+  let score = 0;
+
+  // 即高リスク項目（+2点）
+  if (bmi !== null && bmi < 16) score += 2;
+  if (refeedLoss === 15) score += 2;
+  if (refeedFast === 10) score += 2;
+  if (refeedElect === 'yes') score += 2;
+
+  // 条件②のリスク因子（+1点）
+  if (bmi !== null && bmi < 18.5) score += 1;
+  if (refeedLoss === 10) score += 1;
+  if (refeedFast === 5) score += 1;
+  if (refeedMed === 'yes') score += 1;
+
+  // 高リスク判定
+  if (score >= 2) {
+    resultEl.innerHTML = '<p style="color:red;"><strong>⚠️ 高リスク: Refeeding症候群の危険性があります</strong></p>';
+    return;
+  }
+
+  // 未入力のチェック
+  const isIncomplete = (
+    !hasWeight || !hasHeight ||
+    refeedLoss === null ||
+    refeedFast === null ||
+    refeedElect === null ||
+    refeedMed === null
+  );
+
+  if (isIncomplete) {
+    if (hasHeight && !hasWeight) {
+      resultEl.innerHTML = '<p>体重が入力されていません。全ての項目を入力してください。</p>';
+    } else {
+      resultEl.innerHTML = '<p>全ての項目を入力してください。</p>';
+    }
+    return;
+  }
+
+  // 低リスク判定
+  resultEl.innerHTML = '<p style="color:green;"><strong>低リスク: Refeedingリスクは高くありません</strong></p>';
+}
+
+document.getElementById("toggleRefeedingRisk").addEventListener("click", () => {
+  const area = document.getElementById("refeedingRiskArea");
+  area.style.display = area.style.display === "none" ? "block" : "none";
+});
+
+document.getElementById("refeedHeight").addEventListener("input", calculateRefeedingRisk);
+
+document.querySelectorAll(".loss-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    refeedLoss = parseInt(btn.dataset.value);
+    calculateRefeedingRisk();
+  });
+});
+
+document.querySelectorAll(".fast-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    refeedFast = parseInt(btn.dataset.value);
+    calculateRefeedingRisk();
+  });
+});
+
+document.querySelectorAll(".elect-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    refeedElect = btn.dataset.value;
+    calculateRefeedingRisk();
+  });
+});
+
+document.querySelectorAll(".med-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    refeedMed = btn.dataset.value;
+    calculateRefeedingRisk();
+  });
+});
+
+document.querySelectorAll('.option-group').forEach(group => {
+  group.addEventListener('click', function (e) {
+    if (e.target.tagName === 'BUTTON') {
+      // 全てのボタンから.selectedを外す
+      this.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
+      // クリックされたボタンに.selectedを追加
+      e.target.classList.add('selected');
+    }
+  });
+});
+
+function updateBMI() {
+  const weight = parseFloat(document.getElementById("weightInput").value);
+  const height = parseFloat(document.getElementById("refeedHeight").value);
+  const bmiEl = document.getElementById("bmiDisplay");
+
+  if (!isNaN(weight) && weight > 0 && !isNaN(height) && height > 0) {
+    const bmi = weight / ((height / 100) ** 2);
+    bmiEl.textContent = `BMI: ${bmi.toFixed(1)}`;
+  } else {
+    bmiEl.textContent = '';
+  }
+}
+
+// イベントリスナーで updateBMI を呼び出すだけにする
+document.getElementById("weightInput").addEventListener("input", updateBMI);
+document.getElementById("refeedHeight").addEventListener("input", updateBMI);
 
 //栄養製剤計算
 // 製剤定義
@@ -403,7 +559,7 @@ for (let i = 0; i < 4; i++) {
   });
 
 const sectionTitles = {
-  0: "-経管栄養-",
+  0: "-EN、たんぱく質量順-",
   11: "-カロリー輸液-",
   20: "-タンパク質-",
   23: "-脂質-",
@@ -413,7 +569,7 @@ const sectionTitles = {
 // セレクトメニュー生成
 const defaultOption = document.createElement("option");
 defaultOption.value = "";
-defaultOption.textContent = `-- 製剤${i + 1}を選択 --`;
+defaultOption.textContent = `-- 他の製剤を選択 --`;
 select.appendChild(defaultOption);
 
 let index = 0;
