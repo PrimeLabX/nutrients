@@ -195,14 +195,10 @@
   <script>
   
 //関数格納
-function roundToOneDecimals(num) {
-  return Math.round(num * 10) / 10;
-}
 
-
-var  protein_max = 0;
-var protein_min = 0;
-var calorieNeeds = 0;
+//var  protein_max = 0;
+//var protein_min = 0;
+//var calorieNeeds = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -601,54 +597,83 @@ document.querySelectorAll(".formula-select").forEach((select) => {
     if (!selected || !formulas[selected]) return;
 
     if (formulas[selected].type === "rate") {
-      const container = document.createElement("div");
-      container.style.display = "flex";
-      container.style.alignItems = "center";
-      container.style.gap = "8px";
+  const container = document.createElement("div");
+  container.style.display = "flex";
+  container.style.alignItems = "center";
+  container.style.gap = "8px";
 
-      const label = document.createElement("label");
-      label.textContent = "速度 (mL/h): ";
+  const label = document.createElement("label");
+  label.textContent = "速度 (mL/h): ";
 
-      const input = document.createElement("input");
-      input.type = "number";
-      input.min = "0";
-      input.step = "1";
-      input.className = "rate";
-      input.addEventListener("input", calculateInfusion);
+  const input = document.createElement("input");
+  input.type = "number";
+  input.min = "0";
+  input.step = "1";
+  input.className = "rate";
+  input.addEventListener("input", calculateInfusion);
 
-      label.appendChild(input);
-      container.appendChild(label);
+  label.appendChild(input);
+  container.appendChild(label);
 
-      const presetContainer = document.createElement("div");
-      presetContainer.className = "preset-container";
-     
+  const presetContainer = document.createElement("div");
+  presetContainer.className = "preset-container";
 
-      [10, 20, 30, 40, 50, 60, 70].forEach((val) => {
-        const btn = document.createElement("button");
-        btn.textContent = val;
-        btn.type = "button";
-        btn.className = "preset-btn";
-        btn.addEventListener("click", () => {
-          input.value = val;
-          input.dispatchEvent(new Event("input"));
-        });
-        presetContainer.appendChild(btn);
-      });
+  const rateValues = [10, 20, 30, 40, 50, 60];
+  const rateButtons = [];
 
-      const offBtn = document.createElement("button");
-      offBtn.textContent = "OFF";
-      offBtn.type = "button";
-      offBtn.className = "preset-btn";
-      offBtn.addEventListener("click", () => {
-        select.value = "";
-        inputContainer.innerHTML = "";
-        calculateInfusion();
-      });
-      presetContainer.appendChild(offBtn);
+  rateValues.forEach((val) => {
+    const btn = document.createElement("button");
+    btn.textContent = val;
+    btn.type = "button";
+    btn.className = "preset-btn";
+    btn.addEventListener("click", () => {
+      input.value = val;
+      input.dispatchEvent(new Event("input"));
+    });
+    presetContainer.appendChild(btn);
+    rateButtons.push(btn);
+  });
 
-      container.appendChild(presetContainer);
-      inputContainer.appendChild(container);
-    } else if (formulas[selected].type === "count") {
+  // 間欠/持続トグルボタン
+  const toggleBtn = document.createElement("button");
+  toggleBtn.textContent = "間欠";
+  toggleBtn.type = "button";
+  toggleBtn.className = "preset-btn";
+
+  let isIntermittent = false;
+  toggleBtn.addEventListener("click", () => {
+    isIntermittent = !isIntermittent;
+    if (isIntermittent) {
+  toggleBtn.textContent = "持続";
+  rateButtons.forEach(btn => btn.style.display = "none");
+  label.childNodes[0].nodeValue = "量(mL/day): ";  // ラベルを変更
+  input.dataset.mode = "intermittent";        // ← ★ここに書く！
+} else {
+  toggleBtn.textContent = "間欠";
+  rateButtons.forEach(btn => btn.style.display = "inline-block");
+  label.childNodes[0].nodeValue = "速度 (mL/h): ";  // ラベルを元に戻す
+  input.dataset.mode = "continuous";               // ← ★戻すときは連続モード
+}
+calculateInfusion();
+  });
+  
+  presetContainer.appendChild(toggleBtn);
+
+  // OFFボタン
+  const offBtn = document.createElement("button");
+  offBtn.textContent = "OFF";
+  offBtn.type = "button";
+  offBtn.className = "preset-btn";
+  offBtn.addEventListener("click", () => {
+    select.value = "";
+    inputContainer.innerHTML = "";
+    calculateInfusion();
+  });
+  presetContainer.appendChild(offBtn);
+
+  container.appendChild(presetContainer);
+  inputContainer.appendChild(container);
+} else if (formulas[selected].type === "count") {
       const container = document.createElement("div");
       container.style.display = "flex";
       container.style.alignItems = "center";
@@ -753,34 +778,39 @@ function calculateInfusion() {
     const inputDiv = document.getElementById(`inputContainer${i}`);
 
     if (formula.type === "rate") {
-      const rateInput = inputDiv.querySelector(".rate");
-      const rate = parseFloat(rateInput?.value);
-      if (isNaN(rate) || rate <= 0) return;
-      const volume = rate * 24;
-      const kcal = volume * formula.kcalPerMl;
-      const protein = volume * formula.proteinPerMl;
-      const fat = volume * formula.fatPerMl;
-      const water = volume;
-      const na = formula.naPerMl ? volume * formula.naPerMl : 0;
-      const k = formula.kPerMl ? volume * formula.kPerMl : 0;
-      const naEq = formula.naEqPerMl ? volume * formula.naEqPerMl : 0;
-      const kEq = formula.kEqPerMl ? volume * formula.kEqPerMl : 0;
+  const rateInput = inputDiv.querySelector(".rate");
+  const rate = parseFloat(rateInput?.value);
+  if (isNaN(rate) || rate <= 0) return;
 
-      totalKcal += kcal;
-      totalProtein += protein;
-      totalfat += fat;
-      totalWater += water;
-      totalNa += na;
-      totalK += k;
-      totalNaEq += naEq;
-      totalKEq += kEq;
+  // モードを確認（intermittent: 間欠）
+  const isIntermittent = rateInput.dataset.mode === "intermittent";
 
-      resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq</p>`;
+  const volume = isIntermittent ? rate : rate * 24;
 
-      if (formula.memo && !memoMap.has(formula.name)) {
-        memoMap.set(formula.name, formula.memo);
-      }
-    } else if (formula.type === "count") {
+  const kcal = volume * formula.kcalPerMl;
+  const protein = volume * formula.proteinPerMl;
+  const fat = volume * formula.fatPerMl;
+  const water = volume;
+  const na = formula.naPerMl ? volume * formula.naPerMl : 0;
+  const k = formula.kPerMl ? volume * formula.kPerMl : 0;
+  const naEq = formula.naEqPerMl ? volume * formula.naEqPerMl : 0;
+  const kEq = formula.kEqPerMl ? volume * formula.kEqPerMl : 0;
+
+  totalKcal += kcal;
+  totalProtein += protein;
+  totalfat += fat;
+  totalWater += water;
+  totalNa += na;
+  totalK += k;
+  totalNaEq += naEq;
+  totalKEq += kEq;
+
+  resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq</p>`;
+
+  if (formula.memo && !memoMap.has(formula.name)) {
+    memoMap.set(formula.name, formula.memo);
+  }
+} else if (formula.type === "count") {
       const countInput = inputDiv.querySelector(".count");
       const count = parseFloat(countInput?.value);
       if (isNaN(count) || count <= 0) return;
