@@ -172,7 +172,21 @@ input[type="number"] {
   background-color: #f0f0f0;
 }
 
+/* refeeding */
+.option-group button {
+  padding: 0.4rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
 
+.option-group button.selected {
+  background-color: #007BFF;
+  color: white;
+  border-color: #007BFF;
+}
 
 
 
