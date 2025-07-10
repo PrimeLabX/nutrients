@@ -46,7 +46,7 @@ const formulas = {
       },
 　aminoleban: { name: "アミノレバン500", kcalPerUnit: 39.93*4, fatPerUnit:0, proteinPerUnit: 39.93, type: "count", naPerUnit: 0, kPerMl: 0, naEqPerMl:7, kEqPerMl:0, waterPerUnit: 500
       },
-  Intralipid: { name: "イントラリポス20%100mL", kcalPerUnit: 200, fatPerUnit:200/9, proteinPerUnit: 0, type: "count", naPerMl: 0, kPerUnit: 0, naEqPerUnit: 0, kEqPerUnit: 0, waterPerUnit:100,
+  Intralipid: { name: "イントラリポス20%100mL", kcalPerUnit: 200, fatPerUnit:200/9, proteinPerUnit: 0, type: "count", naPerMl: 0, kPerUnit: 0, naEqPerUnit: 0, kEqPerUnit: 0, waterPerUnit:100
       },
   soldem1: { name: "ソルデム1", kcalPerMl: 52/500,fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 45/500, kEqPerMl: 0
       },
@@ -64,14 +64,13 @@ const formulas = {
       },
   D10W: { name: "10%ブドウ糖液", kcalPerMl: 200/500, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
       },
-  meylon: { name: "メイロン8.4%10mL", kcalPerUnit: 0,fatPerUnit:0, proteinPerUnit: 0, waterPerUnit:10, type: "count", naPerUnit: 0, kPerUnit: 5, naEqPerUnit: 0,　kEqPerUnit: 0
-      }, 
+  meylon: { name: "メイロン8.4%10mL", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 1, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0, "memo: 必要量（mEq）＝不足塩基量（mEq/L）×0.2×体重（kg）"
+      },
 　agarori: { name: "アガロリーゼリー", kcalPerUnit: 150,fatPerUnit:0, proteinPerUnit: 0, waterPerUnit: 83, type: "count", naPerUnit: 0, kPerUnit: 0, naEqPerUnit: 0.4,　kEqPerUnit: 0
       },
   propofol: { name: "プロポフォール", kcalPerMl: 1.1, proteinPerMl: 0,fatPerMl:1.1/9, type: "rate", naPerMl: 0, kPerMl: 0 , naEqPerMl: 0, kEqPerMl: 0
       },
 }
-
 
 const sectionTitles = {
   0: "-EN、たんぱく質量順-",
