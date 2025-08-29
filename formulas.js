@@ -64,8 +64,8 @@ const formulas = {
       },
   D10W: { name: "10%ブドウ糖液", kcalPerMl: 200/500, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0
       },
-  saline10: { name: "10%生理食塩水", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 34/20
-            , kEqPerMl: 0},
+  saline10: { name: "10%生理食塩水", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 34/20 , kEqPerMl: 0
+      },
   meylon: { name: "メイロン8.4%", kcalPerMl: 0, fatPerMl:0, proteinPerMl: 0, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 1, kEqPerMl: 0, memo:"必要量（mEq）＝不足塩基量（mEq/L）×0.2×体重（kg）"
       },
 　agarori: { name: "アガロリーゼリー", kcalPerUnit: 150,fatPerUnit:0, proteinPerUnit: 0, waterPerUnit: 83, type: "count", naPerUnit: 0, kPerUnit: 0, naEqPerUnit: 0.4,　kEqPerUnit: 0
