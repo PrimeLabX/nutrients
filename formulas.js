@@ -80,10 +80,10 @@ const formulas = {
 
 const sectionTitles = {
   0: "-EN、たんぱく質量順-",
-  11: "-カロリー輸液-",
-  20: "-タンパク質-",
-  23: "-脂質-",
-  24: "-その他-",
+  12: "-カロリー輸液-",
+  21: "-タンパク質-",
+  24: "-脂質-",
+  25: "-その他-",
 };
 
 const quickList = ["peptamenAF",　"recoverymini", "hinexre",　"renalmp",  "renawell",  "propofol"];
