@@ -2,6 +2,8 @@
 const formulas = {
   peptamenAF: { name: "ペプタメンAF", kcalPerMl: 1.5, proteinPerMl: 0.095,fatPerMl:0.066, type: "rate", naPerMl: 2.63, kPerMl: 2.32 , naEqPerMl: 0, kEqPerMl: 0
       },
+  aminolaban: { name: "アミノレバン1包（50g）/180mL", kcalPerMl: 213/180, fatPerMl:0, proteinPerMl: 13.5/180, type: "rate", naPerMl: 38.98/180, kPerMl: 212.1/180, naEqPerMl: 0, kEqPerMl: 0
+      },
   terumeal2_0a: { name: "テルミール2.0α", kcalPerMl: 2.0,fatPerMl:0.075,proteinPerMl: 0.0725, type: "rate", naPerMl: 1, kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
       },
   recoverymini: { name: "リカバリーmini", kcalPerMl: 1.6,fatPerMl:0.06,proteinPerMl: 0.064, type: "rate", naPerMl: 230/125, kPerMl: 180/125, naEqPerMl: 0, kEqPerMl: 0
