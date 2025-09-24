@@ -4,7 +4,7 @@ const formulas = {
       },
   terumeal2_0a: { name: "テルミール2.0α", kcalPerMl: 2.0,fatPerMl:0.075,proteinPerMl: 0.0725, type: "rate", naPerMl: 1, kPerMl: 1, naEqPerMl: 0, kEqPerMl: 0
       },
-  aminolaban: { name: "アミノレバン1包（50g）/180mL", kcalPerMl: 213/200, fatPerMl:0, proteinPerMl: 13.5/200, type: "rate", naPerMl: 38.98/200, kPerMl: 212.1/200, naEqPerMl: 0, kEqPerMl: 0, memo:"アミノレバンを180mLの水分に溶かして合計200mL"
+  aminolaban: { name: "アミノレバン1包（50g）/200mL", kcalPerMl: 213/200, fatPerMl:0, proteinPerMl: 13.5/200, type: "rate", naPerMl: 38.98/200, kPerMl: 212.1/200, naEqPerMl: 0, kEqPerMl: 0, memo:"アミノレバンを180mLの水分に溶かして合計200mL"
       },
   recoverymini: { name: "リカバリーmini", kcalPerMl: 1.6,fatPerMl:0.06,proteinPerMl: 0.064, type: "rate", naPerMl: 230/125, kPerMl: 180/125, naEqPerMl: 0, kEqPerMl: 0
       },
