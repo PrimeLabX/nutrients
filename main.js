@@ -479,6 +479,7 @@ function calculateInfusion() {
   let totalNaEq = 0;
   let totalKEq = 0;
   let resultHTML = "";
+  let npcnratio = 0;
 
   // 重複なく製剤名＋メモを保持するMap（キー: 製剤名, 値: memo）
   const memoMap = new Map();
@@ -517,6 +518,7 @@ function calculateInfusion() {
   totalK += k;
   totalNaEq += naEq;
   totalKEq += kEq;
+  npcnratio = (totalKcal-totalProtein*4)/(totalProtein/6.25);
 
   resultHTML += `<p><strong>${formula.name}</strong>：${volume} mL → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na: ${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq</p>`;
 
@@ -544,6 +546,7 @@ function calculateInfusion() {
       totalK += k;
       totalNaEq += naEq;
       totalKEq += kEq;
+      npcnratio = (totalKcal-totalProtein*4)/(totalProtein/6.25);
 
       resultHTML += `<p><strong>${formula.name}</strong>：${count} 個 → ${Math.round(kcal)} kcal, タンパク質${Math.round(protein)}g, 脂質${Math.round(fat)}g, Na:${Math.round(na)}mg, K:${Math.round(k)}mg, Na:${Math.round(naEq)}mEq, K:${Math.round(kEq)}mEq</p>`;
 
@@ -563,6 +566,7 @@ function calculateInfusion() {
   resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>`;
   resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
   resultHTML += `<p>Na: ${Math.round(totalNa)} mg, K: ${Math.round(totalK)} mg, Na: ${Math.round(totalNaEq)} mEq, K: ${Math.round(totalKEq)} mEq　(経管栄養はmg, 輸液はmEqでそれぞれ合算)</p>`;
+  resultHTML += `<p>NPC/N ratio: ${Math.round(npcnratio*10)/10}</p>`;
 
   // 重複なしメモ表示
   if (memoMap.size > 0) {
@@ -669,4 +673,3 @@ document.getElementById("input-calorie").addEventListener("input", calculateHAI)
 document.getElementById("propofol-rate").addEventListener("input", calculateHAI);      
 
 });
-
