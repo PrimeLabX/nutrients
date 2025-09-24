@@ -564,13 +564,15 @@ function calculateInfusion() {
   const carbRatio =  totalWater > 0 ? (100-fatRatio-proteinRatio > 0 ? 100-fatRatio-proteinRatio : 0):0;
 
   resultHTML += `<hr><p><strong>合計:</strong> 水分${Math.round(totalWater)} mL</p>`;
-  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
-  resultHTML += `<p>Na: ${Math.round(totalNa)} mg, K: ${Math.round(totalK)} mg, Na: ${Math.round(totalNaEq)} mEq, K: ${Math.round(totalKEq)} mEq　(経管栄養はmg, 輸液はmEqでそれぞれ合算)</p>`;
+  
+
   if (isFinite(npcnratio)) {
-  resultHTML += `<p>NPC/N ratio: ${Math.round(npcnratio * 10) / 10}</p>`;
+  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g, NPC/N ratio: ${Math.round(npcnratio * 10) / 10}</p>`;
 } else {
-  resultHTML += `<p>NPC/N ratio: タンパク含有なし</p>`;
+  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}%)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g, NPC/N ratio: タンパク含有なし</p>`;
 }
+
+  resultHTML += `<p>Na: ${Math.round(totalNa)} mg, K: ${Math.round(totalK)} mg, Na: ${Math.round(totalNaEq)} mEq, K: ${Math.round(totalKEq)} mEq　(経管栄養はmg, 輸液はmEqでそれぞれ合算)</p>`;
 
   // 重複なしメモ表示
   if (memoMap.size > 0) {
