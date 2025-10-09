@@ -22,7 +22,11 @@ const formulas = {
       },
   marmedone: { name: "マーメッドワン", kcalPerMl: 300/300, fatPerMl:11.4/300, proteinPerMl: 12/300, type: "rate", naPerMl: 420/300, kPerMl: 495/300, naEqPerMl:0, kEqPerMl: 0
       },
+  isokalj: { name: "アイソカルジュニア", kcalPerMl: 1, fatPerMl:3.3/100, proteinPerMl: 2.8/100, type: "rate", naPerMl: 125/100, kPerMl: 1, naEqPerMl:0, kEqPerMl: 0
+      },
   renawell: { name: "レナウェル3", kcalPerMl: 200/125, fatPerMl:8.9/125, proteinPerMl: 3/125, type: "rate", naPerMl: 60/125, kPerMl: 20/125, naEqPerMl: 0, kEqPerMl: 0
+      },
+  mmilk: { name: "名大ミルク", kcalPerMl: 168/240, fatPerMl:0, proteinPerMl:4/240, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0, kEqPerMl: 0, memo:"脂質、電解質量不明"
       },
   elneopaNF1: { name: "エルネオパNF1", kcalPerMl: 0.56,fatPerMl:0, proteinPerMl: 0.02, type: "rate", naPerMl: 0, kPerMl: 0, naEqPerMl: 0.05, kEqPerMl: 0.022
       },
@@ -80,10 +84,10 @@ const formulas = {
 
 const sectionTitles = {
   0: "-EN、たんぱく質量順-",
-  12: "-カロリー輸液-",
-  21: "-タンパク質-",
-  24: "-脂質-",
-  25: "-その他-",
+  14: "-カロリー輸液-",
+  23: "-タンパク質-",
+  26: "-脂質-",
+  27: "-その他-",
 };
 
 const quickList = ["peptamenAF",　"recoverymini", "hinexre",　"renalmp",  "renawell",  "propofol"];
