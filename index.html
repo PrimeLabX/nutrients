@@ -26,6 +26,8 @@
       <button class="tab-button" data-target="hai">オリジナル製剤</button>
     </div>
 
+
+
     <!-- 必要栄養量タブ -->
     <div id="needs" class="tab-content">
       <h2>患者の必要栄養量</h2>
@@ -112,8 +114,27 @@
   <div id="refeedingRiskResult" style="margin-top:1em;"></div>
 </div>
 
+<!-- 小児栄養計算 UI -->
+<div>
+  <button id="togglePediatric">小児水分栄養</button>
+</div>
+
+<div id="pediatricArea" style="display:none; border:1px solid #ccc; padding:1em; margin-top:1em;">
+  <h3>小児の必要水分量・栄養量計算</h3>
+  <div>
+    <label>年齢（歳、小数1位まで）: 
+      <input type="number" id="ageInput" min="0" step="0.1" />
+    </label>
+  </div>
+  <div id="pediatricResult" style="margin-top:1em;"></div>
+</div>
+
   <div id="needsResult"></div>
 </div>
+
+
+
+
     <!-- 栄養製剤タブ -->
     <div id="formulas" class="tab-content active">
       <h2>栄養製剤の投与量</h2>
