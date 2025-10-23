@@ -166,7 +166,7 @@ function calculateRefeedingRisk() {
 
   // 高リスク判定
   if (score >= 2) {
-    resultEl.innerHTML = '<p style="color:red;"><strong>⚠️ 高リスク: Refeeding症候群の危険性があります</strong></p>';
+    resultEl.innerHTML = '<p style="color:red;"><strong>⚠️ 高リスク: Refeeding症候群の危険性があります 10kcal/kg/dayに設定し,4～7日かけて目標まで増量する</strong></p>';
     return;
   }
 
@@ -567,7 +567,7 @@ function calculateInfusion() {
   
 
   if (isFinite(npcnratio)) {
-  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}% NPC/N ratio: ${Math.round(npcnratio * 10) / 10})　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
+  resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}%, タンパク質: ${proteinRatio}%, 脂質: ${fatRatio}%, NPC/N ratio: ${Math.round(npcnratio * 10) / 10}), タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
 } else {
   resultHTML += `<p>${Math.round(totalKcal)} kcal (炭水化物: ${carbRatio}% タンパク質: ${proteinRatio}% 脂質: ${fatRatio}% NPC/N ratio: タンパク含有なし)　タンパク質 ${Math.round(totalProtein)} g, 脂質 ${Math.round(totalfat)} g</p>`;
 }
