@@ -28,84 +28,7 @@
     });
 });
   
-  
-// --- 小児栄養計算機能 ---
-document.getElementById("togglePediatric").addEventListener("click", () => {
-  const area = document.getElementById("pediatricArea");
-  area.style.display = area.style.display === "none" ? "block" : "none";
-});
-
-// 年齢入力時の計算
-document.getElementById("ageInput").addEventListener("input", calculatePediatric);
-document.getElementById("weightInput").addEventListener("input", calculatePediatric);
-
-function calculatePediatric() {
-  const age = parseFloat(document.getElementById("ageInput").value);
-  const weight = parseFloat(document.getElementById("weightInput").value);
-  const resultEl = document.getElementById("pediatricResult");
-
-  if (isNaN(age) || age < 0 || isNaN(weight) || weight <= 0) {
-    resultEl.innerHTML = "<p>年齢と体重を正しく入力してください。</p>";
-    return;
-  }
-
-  // --- Holliday-Segar式による水分量計算 ---
-  let fluid = 0;
-  if (weight <= 10) {
-    fluid = weight * 100;
-  } else if (weight <= 20) {
-    fluid = 1000 + (weight - 10) * 50;
-  } else {
-    fluid = 1500 + (weight - 20) * 20;
-  }
-
-  // --- 年齢別必要カロリー (kcal/kg/day) ---
-  let kcalPerKg;
-  if (age < 1/12) kcalPerKg = 120; // 0〜1か月
-  else if (age < 5/12) kcalPerKg = 110; // 2〜5か月
-  else if (age < 1) kcalPerKg = 100; // 6〜12か月
-  else if (age < 2) kcalPerKg = 86; // 1歳
-  else if (age < 3) kcalPerKg = 92; // 2歳
-  else if (age < 4) kcalPerKg = 92; // 3歳
-  else if (age < 5) kcalPerKg = 88; // 4歳
-  else if (age < 6) kcalPerKg = 85; // 5歳
-  else if (age < 7) kcalPerKg = 81; // 6歳
-  else if (age < 8) kcalPerKg = 77; // 7歳
-  else if (age < 9) kcalPerKg = 71; // 8歳
-  else if (age < 10) kcalPerKg = 65; // 9歳
-  else if (age < 11) kcalPerKg = 62; // 10歳
-  else if (age < 12) kcalPerKg = 58; // 11歳
-  else if (age < 13) kcalPerKg = 56; // 12歳
-  else if (age < 14) kcalPerKg = 51; // 13歳
-  else kcalPerKg = 49; // 14歳以上
-
-  const totalKcal = kcalPerKg * weight;
-
-  // --- 年齢別必要タンパク量 (g/kg/day) ---
-  let proteinPerKg;
-  if (age < 0.5) proteinPerKg = 2.2;         // 0〜0.5歳
-  else if (age < 1) proteinPerKg = 2.0;      // 0.5〜1歳
-  else if (age < 3) proteinPerKg = 1.8;      // 1〜3歳
-  else if (age < 6) proteinPerKg = 1.5;      // 4〜6歳
-  else if (age < 10) proteinPerKg = 1.2;     // 7〜10歳
-  else if (age < 15) proteinPerKg = 1.0;     // 11〜14歳
-  else proteinPerKg = 0.8;                   // 15〜18歳
-
-  const totalProtein = proteinPerKg * weight;
-
-  // 結果表示
-  resultEl.innerHTML = `
-    <hr>
-    <p><strong>年齢:</strong> ${age} 歳</p>
-    <p><strong>体重:</strong> ${weight.toFixed(1)} kg</p>
-    <p><strong>必要水分量 (Holliday-Segar):</strong> 約 ${fluid.toFixed(0)} mL/day</p>
-    <p><strong>必要カロリー:</strong> ${Math.round(totalKcal)} kcal/day (${kcalPerKg} kcal/kg/day)</p>
-    <p><strong>必要タンパク量:</strong> ${totalProtein.toFixed(1)} g/day (${proteinPerKg} g/kg/day)</p>
-  `;
-}
-
-
-//必要栄養量計算タブ
+  //必要栄養量計算タブ
   const weightInput = document.getElementById("weightInput");
   const kcalFactorInput = document.getElementById("kcalFactorInput");
   const conditionSelect = document.getElementById("conditionSelect");
@@ -330,6 +253,85 @@ function updateBMI() {
 // イベントリスナーで updateBMI を呼び出すだけにする
 document.getElementById("weightInput").addEventListener("input", updateBMI);
 document.getElementById("refeedHeight").addEventListener("input", updateBMI);
+
+
+// --- 小児栄養計算機能 ---
+document.getElementById("togglePediatric").addEventListener("click", () => {
+  const area = document.getElementById("pediatricArea");
+  area.style.display = area.style.display === "none" ? "block" : "none";
+});
+
+// 年齢入力時の計算
+document.getElementById("ageInput").addEventListener("input", calculatePediatric);
+document.getElementById("weightInput").addEventListener("input", calculatePediatric);
+
+function calculatePediatric() {
+  const age = parseFloat(document.getElementById("ageInput").value);
+  const weight = parseFloat(document.getElementById("weightInput").value);
+  const resultEl = document.getElementById("pediatricResult");
+
+  if (isNaN(age) || age < 0 || isNaN(weight) || weight <= 0) {
+    resultEl.innerHTML = "<p>年齢と体重を正しく入力してください。</p>";
+    return;
+  }
+
+  // --- Holliday-Segar式による水分量計算 ---
+  let fluid = 0;
+  if (weight <= 10) {
+    fluid = weight * 100;
+  } else if (weight <= 20) {
+    fluid = 1000 + (weight - 10) * 50;
+  } else {
+    fluid = 1500 + (weight - 20) * 20;
+  }
+
+  // --- 年齢別必要カロリー (kcal/kg/day) ---
+  let kcalPerKg;
+  if (age < 1/12) kcalPerKg = 120; // 0〜1か月
+  else if (age < 5/12) kcalPerKg = 110; // 2〜5か月
+  else if (age < 1) kcalPerKg = 100; // 6〜12か月
+  else if (age < 2) kcalPerKg = 86; // 1歳
+  else if (age < 3) kcalPerKg = 92; // 2歳
+  else if (age < 4) kcalPerKg = 92; // 3歳
+  else if (age < 5) kcalPerKg = 88; // 4歳
+  else if (age < 6) kcalPerKg = 85; // 5歳
+  else if (age < 7) kcalPerKg = 81; // 6歳
+  else if (age < 8) kcalPerKg = 77; // 7歳
+  else if (age < 9) kcalPerKg = 71; // 8歳
+  else if (age < 10) kcalPerKg = 65; // 9歳
+  else if (age < 11) kcalPerKg = 62; // 10歳
+  else if (age < 12) kcalPerKg = 58; // 11歳
+  else if (age < 13) kcalPerKg = 56; // 12歳
+  else if (age < 14) kcalPerKg = 51; // 13歳
+  else kcalPerKg = 49; // 14歳以上
+
+  const totalKcal = kcalPerKg * weight;
+
+  // --- 年齢別必要タンパク量 (g/kg/day) ---
+  let proteinPerKg;
+  if (age < 0.5) proteinPerKg = 2.2;         // 0〜0.5歳
+  else if (age < 1) proteinPerKg = 2.0;      // 0.5〜1歳
+  else if (age < 3) proteinPerKg = 1.8;      // 1〜3歳
+  else if (age < 6) proteinPerKg = 1.5;      // 4〜6歳
+  else if (age < 10) proteinPerKg = 1.2;     // 7〜10歳
+  else if (age < 15) proteinPerKg = 1.0;     // 11〜14歳
+  else proteinPerKg = 0.8;                   // 15〜18歳
+
+  const totalProtein = proteinPerKg * weight;
+
+  // 結果表示
+  resultEl.innerHTML = `
+    <hr>
+    <p><strong>年齢:</strong> ${age} 歳</p>
+    <p><strong>体重:</strong> ${weight.toFixed(1)} kg</p>
+    <p><strong>必要水分量 (Holliday-Segar):</strong> 約 ${fluid.toFixed(0)} mL/day</p>
+    <p><strong>必要カロリー:</strong> ${Math.round(totalKcal)} kcal/day (${kcalPerKg} kcal/kg/day)</p>
+    <p><strong>必要タンパク量:</strong> ${totalProtein.toFixed(1)} g/day (${proteinPerKg} g/kg/day)</p>
+  `;
+}
+
+
+
 
 //栄養製剤計算
 
